@@ -1,74 +1,104 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, ActivityIndicator, Button } from 'react-native';
 
 export default function HomeScreen() {
+  const [weather, setWeather] = useState<any>(null);
+  const [city, setCity] = useState('Atlanta'); 
+  const [loading, setLoading] = useState(false);
+
+  const apiKey = '3f796feadfc14b76932182356252701';
+
+  useEffect(() => {
+    fetchWeather(city);
+  }, [city]);
+
+  const fetchWeather = async (selectedCity: string) => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${selectedCity}&aqi=no`
+      );
+      const data = await response.json();
+      setWeather(data);
+    } catch (error) {
+      console.error('Error fetching weather:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#fff" />
+      ) : weather ? (
+        <View style={styles.weatherContainer}>
+          <Text style={styles.title}>{city} Weather</Text>
+          <Text style={styles.info}>Temperature: {weather.current.temp_f} °F</Text>
+          <Text style={styles.info}>Condition: {weather.current.condition.text}</Text>
+          <Text style={styles.info}>Humidity: {weather.current.humidity}%</Text>
+          <Text style={styles.info}>Wind Speed: {weather.current.wind_mph} mph</Text>
+        </View>
+      ) : (
+        <Text style={styles.info}>Select a city to view weather data.</Text>
+      )}
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Atlanta"
+          onPress={() => setCity('Atlanta')}
+          color="#1e90ff"
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+        <Button
+          title="New York"
+          onPress={() => setCity('New York')}
+          color="#1e90ff"
+        />
+        <Button
+          title="Chicago"
+          onPress={() => setCity('Chicago')}
+          color="#1e90ff"
+        />
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#87cefa',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    padding: 16,
   },
-  stepContainer: {
-    gap: 8,
+  weatherContainer: {
+    marginBottom: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: 16,
+    borderRadius: 12,
+    width: '90%',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    color: '#333',
+  },
+  info: {
+    fontSize: 18,
     marginBottom: 8,
+    color: '#333',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginTop: 16,
   },
 });
