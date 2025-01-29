@@ -47,17 +47,17 @@ export default function HomeScreen() {
         <Button
           title="Atlanta"
           onPress={() => setCity('Atlanta')}
-          color="#1e90ff"
+          color="#229462"
         />
         <Button
           title="New York"
           onPress={() => setCity('New York')}
-          color="#1e90ff"
+          color="#229462"
         />
         <Button
           title="Chicago"
           onPress={() => setCity('Chicago')}
-          color="#1e90ff"
+          color="#229462"
         />
       </View>
     </View>
@@ -67,7 +67,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#87cefa',
+    backgroundColor: '#8bf7c8',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
